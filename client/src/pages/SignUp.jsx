@@ -26,11 +26,11 @@ export default function SignUp() {
         headers: {
           'Content-Type': 'application/json'
         },
-        body : JSON.stringify(formData)
+        body: JSON.stringify(formData)
       });
 
       const data = await res.json();
-      if (!data.success) {
+      if (data.success === false) {
         setError(data.message)
         setLoading(false)
         return;
@@ -84,7 +84,7 @@ export default function SignUp() {
             />
           </div>
 
-          <button className="rounded-2xl cursor-pointer w-full bg-black text-white py-3 hover:bg-black/85 transition">
+          <button onClick={handleSubmit} className="rounded-3xl cursor-pointer w-full bg-black text-white py-3 hover:bg-black/85 transition">
             Register
           </button>
 
