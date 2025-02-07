@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import cookieParser from "cookie-parser";
 import connectDB from "./config/mongodb.js";
 import authRouter from './routes/auth.route.js';
+import workoutRouter from './routes/workout.route.js';
 import path from 'path';
 
 dotenv.config();
@@ -22,6 +23,7 @@ app.listen(3000, () => {
 })
 
 app.use('/api/auth', authRouter);
+app.use('/api/workouts', workoutRouter);
 
 app.use(express.static(path.join(__dirname, '/client/dist')))
 
