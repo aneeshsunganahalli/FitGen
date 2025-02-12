@@ -48,6 +48,14 @@ export const generateWorkout = async (req, res) => {
       });
     }
 
+    // Verify user is authenticated
+    if (!req.user?.id) {
+      return res.status(401).json({
+        error: "Unauthorized",
+        details: "User must be logged in to create workouts"
+      });
+    }
+
     const chain = prompt.pipe(model.bind({
       functions: [{
         name: "output_workout",
@@ -87,9 +95,9 @@ export const generateWorkout = async (req, res) => {
 
     console.log('AI Response:', response);
 
-    // Create new workout document
+    // Create new workout document with authenticated user's ID
     const workout = new Workout({
-      userId: req.user?._id || '65f9c8f0c4c6e8c4c8f0c4c6', // Replace with actual user ID
+      userId: req.user.id,  // Use the authenticated user's ID
       goal,
       fitnessLevel,
       availableEquipment: Array.isArray(availableEquipment) 

@@ -4,38 +4,117 @@ import jwt from 'jsonwebtoken'
 import { errorHandler } from '../utils/error.js';
 
 
-export const signup = async (req,res,next) => {
-  const {username, email, password} = req.body
-  const hashedPassword = bcryptjs.hashSync(password, 10);  
-  const newUser = new User({username, email, password: hashedPassword});  
+export const signup = async (req, res) => {
+  const { username, email, password } = req.body;
+  
   try {
+    // Validate required fields
+    if (!username || !email || !password) {
+      return res.status(400).json({
+        error: 'Missing required fields',
+        details: 'Username, email, and password are required'
+      });
+    }
 
+    // Check if user already exists
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({
+        error: 'Registration failed',
+        details: 'User already exists'
+      });
+    }
+
+    // Hash password
+    const hashedPassword = bcryptjs.hashSync(password, 10);
+
+    // Create new user
+    const newUser = new User({
+      username,
+      email,
+      password: hashedPassword
+    });
+
+    // Save user to database
     await newUser.save();
-    res.status(201).json({"message" : "User created successfully"});
 
-  } catch (err) {
-    next(err);
+    // Create JWT token
+    const token = jwt.sign(
+      { id: newUser._id }, 
+      process.env.JWT_SECRET
+    );
+
+    // Remove password from response
+    const { password: pass, ...rest } = newUser._doc;
+
+    // Set cookie and send response
+    res
+      .cookie('access_token', token, { httpOnly: true })
+      .status(201)
+      .json(rest);
+
+  } catch (error) {
+    console.error('Signup error:', error);
+    res.status(500).json({
+      error: 'Error creating user',
+      details: error.message
+    });
   }
 };
 
-export const signin = async (req,res,next) => {
-  const {email,password} = req.body
+export const signin = async (req, res) => {
+  const { email, password } = req.body;
+
   try {
-    const validUser = await User.findOne({email})
+    // Validate required fields
+    if (!email || !password) {
+      return res.status(400).json({
+        error: 'Missing required fields',
+        details: 'Email and password are required'
+      });
+    }
+
+    // Find user
+    const validUser = await User.findOne({ email });
     if (!validUser) {
-      throw errorHandler(401, "User not found")
+      return res.status(404).json({
+        error: 'User not found',
+        details: 'Invalid credentials'
+      });
     }
-    const validPassword = bcryptjs.compareSync(password, validUser.password)
+
+    // Verify password
+    const validPassword = bcryptjs.compareSync(password, validUser.password);
     if (!validPassword) {
-      throw errorHandler(401,"Invalid Credentials")
+      return res.status(401).json({
+        error: 'Wrong credentials',
+        details: 'Invalid credentials'
+      });
     }
-    const token = jwt.sign({id:validUser._id}, process.env.JWT_SECRET)
-    const {password : pass, ...rest} = validUser._doc
-    res.cookie('access_token', token, {httpOnly:true}).status(200).json(rest)
+
+    // Create token
+    const token = jwt.sign(
+      { id: validUser._id }, 
+      process.env.JWT_SECRET
+    );
+
+    // Remove password from response
+    const { password: pass, ...rest } = validUser._doc;
+
+    // Set cookie and send response
+    res
+      .cookie('access_token', token, { httpOnly: true })
+      .status(200)
+      .json(rest);
+
   } catch (error) {
-    next(error)
+    console.error('Signin error:', error);
+    res.status(500).json({
+      error: 'Error signing in',
+      details: error.message
+    });
   }
-}
+};
 
 
 export const google = async (req, res, next) => {
@@ -63,6 +142,15 @@ export const google = async (req, res, next) => {
         .json(rest);
 
       }
+  } catch(error) {
+    next(error);
+  }
+}
+
+export const signOut = async (req, res, next) => {
+  try {
+    res.clearCookie('access_token')
+    res.status(200).json({message: 'Signout successful'});
   } catch(error) {
     next(error);
   }
