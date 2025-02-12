@@ -18,3 +18,7 @@
 .active li{
   @apply text-white;
 }
+
+::-webkit-scrollbar{
+  @apply hidden
+}
