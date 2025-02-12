@@ -5,28 +5,38 @@ import cookieParser from "cookie-parser";
 import connectDB from "./config/mongodb.js";
 import authRouter from './routes/auth.route.js';
 import workoutRouter from './routes/workout.route.js';
-import path from 'path';
+import { fileURLToPath } from 'node:url';
+import { dirname, join } from 'node:path';
 
 dotenv.config();
 connectDB();
 
-const __dirname = path.resolve();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 const app = express();
+const PORT = process.env.PORT || 5000;
 
 app.use(cors({ origin: "http://localhost:5173", credentials: true }));
 
 app.use(express.json())
 app.use(cookieParser())
 
-app.listen(3000, () => {
-  console.log("Server is running on port 3000")
-})
+const server = app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+}).on('error', (err) => {
+  if (err.code === 'EADDRINUSE') {
+    console.log(`Port ${PORT} is busy, trying ${PORT + 1}`);
+    server.listen(PORT + 1);
+  } else {
+    console.error('Server error:', err);
+  }
+});
 
 app.use('/api/auth', authRouter);
 app.use('/api/workouts', workoutRouter);
 
-app.use(express.static(path.join(__dirname, '/client/dist')))
+app.use(express.static(join(__dirname, '/client/dist')))
 
 app.get('*', (req,res) => {
-  res.sendFile(path.join(__dirname,'client', 'dist', 'index.html'))
+  res.sendFile(join(__dirname, 'client', 'dist', 'index.html'))
 })

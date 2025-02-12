@@ -17,6 +17,7 @@
 
 .active li{
   @apply text-white;
+  @apply text-lg;
 }
 
 ::-webkit-scrollbar{

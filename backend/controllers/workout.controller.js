@@ -1,89 +1,112 @@
-import Workout from "../models/workout.model.js"
-import axios from 'axios'
+import { ChatOpenAI } from "@langchain/openai";
+import { PromptTemplate } from "@langchain/core/prompts";
+import { JsonOutputFunctionsParser } from "langchain/output_parsers";
+import Workout from "../models/workout.model.js";
+import dotenv from "dotenv";
 
-const OLLAMA_API_URL = "http://127.0.0.1:11434/api/generate";
+// Load environment variables
+dotenv.config();
 
+// Initialize the OpenAI chat model
+const model = new ChatOpenAI({
+  modelName: "gpt-4o-mini",  // Use "gpt-3.5-turbo" for a cheaper option
+  temperature: 0.7,
+  openAIApiKey: process.env.OPENAI_API_KEY,
+});
+
+const parser = new JsonOutputFunctionsParser();
+
+// Define the structured prompt template
+const prompt = PromptTemplate.fromTemplate(`
+Create a personalized workout plan with the following details:
+Goal: {goal}
+Fitness Level: {fitnessLevel}
+Available Equipment: {availableEquipment}
+
+Please provide a detailed workout plan that:
+1. Matches the user's fitness level
+2. Uses only the available equipment
+3. Helps achieve their specific goal
+4. Includes appropriate sets, reps, and duration for each exercise
+`);
+
+/**
+ * Generates a workout plan based on user inputs
+ * @param {string} goal - User's fitness goal
+ * @param {string} fitnessLevel - User's current fitness level
+ * @param {string[]} availableEquipment - Array of available equipment
+ * @returns {Promise<Object>} Workout plan in JSON format
+ */
 export const generateWorkout = async (req, res) => {
-  const { userId, goal, fitnessLevel, availableEquipment } = req.body;
-  
-  // Make the prompt more explicit about requiring JSON format
-  const prompt = `
-  Create a workout plan formatted as valid JSON with the following structure:
-  {
-    "exercises": [
-      {
-        "name": "exercise name",
-        "sets": number,
-        "reps": number,
-        "duration": "duration in minutes"
-      }
-    ]
-  }
-
-  Use these details to create the plan:
-  - Goal: ${goal}
-  - Fitness Level: ${fitnessLevel}
-  - Available Equipment: ${availableEquipment}
-
-  Return ONLY the JSON, no additional text.
-  `;
-
   try {
-    const response = await axios.post(OLLAMA_API_URL, {
-      model: "mistral",
-      prompt,
-      stream: false
-    });
-
-    // Debug logging
-    console.log('Raw Ollama response:', response.data);
-
-    // Ollama returns data in { response: "..." } format
-    const aiResponse = response.data.response;
-    console.log('AI response text:', aiResponse);
-
-    let workoutData;
-    try {
-      // Try to find JSON in the response
-      const jsonMatch = aiResponse.match(/\{[\s\S]*\}/);
-      const jsonStr = jsonMatch ? jsonMatch[0] : aiResponse;
-      workoutData = JSON.parse(jsonStr);
-      console.log('Parsed workout data:', workoutData);
-    } catch (parseError) {
-      console.error("Parse error:", parseError);
-      console.error("Failed to parse response:", aiResponse);
-      return res.status(500).json({ 
-        error: "Invalid AI response format",
-        details: "AI response could not be parsed as JSON",
-        response: aiResponse
+    const { goal, fitnessLevel, availableEquipment } = req.body;
+    
+    if (!goal || !fitnessLevel || !availableEquipment) {
+      return res.status(400).json({ 
+        error: "Missing required fields",
+        details: "Goal, fitness level, and available equipment are required" 
       });
     }
 
-    if (!workoutData || !workoutData.exercises) {
-      return res.status(500).json({ 
-        error: "Invalid workout data structure",
-        details: "Response missing required 'exercises' field",
-        data: workoutData
-      });
-    }
+    const chain = prompt.pipe(model.bind({
+      functions: [{
+        name: "output_workout",
+        description: "Generate a structured workout plan",
+        parameters: {
+          type: "object",
+          properties: {
+            exercises: {
+              type: "array",
+              items: {
+                type: "object",
+                properties: {
+                  name: { type: "string", description: "Name of the exercise" },
+                  sets: { type: "number", description: "Number of sets" },
+                  reps: { type: "number", description: "Number of reps per set" },
+                  duration: { type: "string", description: "Duration of the exercise" }
+                },
+                required: ["name", "sets", "reps", "duration"]
+              }
+            }
+          },
+          required: ["exercises"]
+        }
+      }],
+      function_call: { name: "output_workout" }
+    })).pipe(parser);
 
-    const newWorkout = new Workout({
-      userId,
+    console.log('Generating workout with params:', { goal, fitnessLevel, availableEquipment });
+
+    const response = await chain.invoke({
       goal,
       fitnessLevel,
-      availableEquipment,
-      exercises: workoutData.exercises
+      availableEquipment: Array.isArray(availableEquipment) 
+        ? availableEquipment.join(", ")
+        : availableEquipment
     });
 
-    await newWorkout.save();
-    res.json({ message: "Workout saved!", workout: newWorkout });
+    console.log('AI Response:', response);
 
+    // Create new workout document
+    const workout = new Workout({
+      userId: req.user?._id || '65f9c8f0c4c6e8c4c8f0c4c6', // Replace with actual user ID
+      goal,
+      fitnessLevel,
+      availableEquipment: Array.isArray(availableEquipment) 
+        ? availableEquipment.join(", ")
+        : availableEquipment,
+      exercises: response.exercises
+    });
+
+    // Save to database
+    await workout.save();
+
+    res.json(workout);
   } catch (error) {
-    console.error("Ollama API Error:", error.response?.data || error.message);
+    console.error('Workout generation error:', error);
     res.status(500).json({ 
-      error: "AI generation failed",
-      details: error.message,
-      response: error.response?.data
+      error: "Failed to generate workout plan", 
+      details: error.message 
     });
   }
-}
+};

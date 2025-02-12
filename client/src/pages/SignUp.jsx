@@ -90,7 +90,7 @@ export default function SignUp() {
 
           <OAuth />
 
-          <p className='text-black text-md pt-3 font-medium'>Don't have an account?
+          <p className='text-black text-md pt-3 font-medium'>Already have an account?
             <Link to={'/sign-in'}>
               <span className=' underline cursor-pointer'> Login</span>
             </Link>

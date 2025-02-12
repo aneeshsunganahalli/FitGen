@@ -78,7 +78,7 @@ export default function SignIn() {
 
           <OAuth />
 
-          <p className='text-black text-md pt-3 font-medium'>Already have an account?
+          <p className='text-black text-md pt-3 font-medium'>Don't have an account?
             <Link to={'/sign-up'}>
               <span className=' cursor-pointer'> R</span>
               <span className='underline cursor-pointer'>egiste</span>

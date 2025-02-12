@@ -8,7 +8,7 @@ export default function Navbar() {
   return (
     <div className='flex items-center justify-between w-full p-10 px-15 bg-black'>
       <p className='pl-4 text-2xl'>FitGen</p>
-      <ul className='flex gap-10 font-semibold text-gray-500'>
+      <ul className='flex gap-10 font-semibold text-gray-500 px-5'>
         <NavLink to={'/'}><li>Home</li></NavLink>
         <NavLink to={'/workouts'}><li>Workouts</li></NavLink>
         <NavLink to={'/about'}><li>About</li></NavLink>
