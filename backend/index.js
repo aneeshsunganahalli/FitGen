@@ -5,6 +5,7 @@ import cookieParser from "cookie-parser";
 import connectDB from "./config/mongodb.js";
 import authRouter from './routes/auth.route.js';
 import workoutRouter from './routes/workout.route.js';
+import userRouter from './routes/user.route.js';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 
@@ -38,6 +39,7 @@ const server = app.listen(PORT, () => {
 
 app.use('/api/auth', authRouter);
 app.use('/api/workouts', workoutRouter);
+app.use('/api/user', userRouter)
 
 app.use(express.static(join(__dirname, '/client/dist')))
 

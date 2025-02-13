@@ -25,7 +25,7 @@ export default function Home() {
             <p className=''>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt </p>
 
             <div className=''>
-              <button onClick={() => navigate('/sign-up')} className='bg-white text-black text-sm font-semibold py-3 px-6 rounded-lg mt-15 hover:opacity-85'>Get started</button>
+              <button onClick={() => navigate('/sign-up')} className='bg-white text-black text-sm font-semibold py-3 px-6 rounded-lg mt-15 hover:opacity-85 hover:scale-105 transition-all duration-300'>Get started</button>
 
               <div className='flex gap-5 mt-8'>
                 <img src="Twitter 1.png" alt="" />
