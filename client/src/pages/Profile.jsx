@@ -24,6 +24,13 @@ export default function Profile() {
     }
   }, [file]);
 
+  useEffect(() => {
+    const formElement = document.getElementById('profile-form');
+    if (formElement) {
+      formElement.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, []);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -80,7 +87,7 @@ export default function Profile() {
   return (
     <>
       <Navbar />
-      <div className='max-w-4xl mx-auto'>
+      <div id="profile-form"  className='max-w-4xl mx-auto pt-32'>
         <h1 className='text-3xl font-semibold text-center my-7'>Profile</h1>
         <form onSubmit={handleSubmit} className=' flex flex-col gap-5 bg-white text-black rounded-4xl px-12 py-6 mb-20'>
           <div className='mt-5 mb-10 mx-auto'>
@@ -144,7 +151,7 @@ export default function Profile() {
             </div>
           </div>
 
-          <button disabled={loading} className='mt-10 bg-black text-white rounded-3xl p-3 uppercase hover:opacity-90 disabled:opacity-80'>{loading ? 'Loading...' : "Update"}</button>
+          <button disabled={loading} className=' bg-black text-white rounded-3xl p-3 uppercase hover:opacity-90 disabled:opacity-80'>{loading ? 'Loading...' : "Update"}</button>
 
         </form>
       </div>

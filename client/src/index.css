@@ -17,9 +17,52 @@
 
 .active li{
   @apply rounded-3xl px-4 py-2;
-  @apply bg-white text-black transition-all duration-200;
+  @apply bg-white text-black;
+  @apply transition-all duration-300 ease-in-out;
+}
+
+li {
+  @apply rounded-3xl px-4 py-2;
+  @apply transition-all duration-300 ease-in-out;
 }
 
 ::-webkit-scrollbar{
   @apply hidden
+}
+
+/* Create a navigation container for the sliding effect */
+.nav-links {
+  @apply relative flex items-center gap-10;
+}
+
+/* Create the sliding background */
+.nav-links::before {
+  content: '';
+  @apply absolute bg-white rounded-3xl transition-all duration-300 ease-in-out;
+  height: 100%;
+  width: var(--slide-width, 0);
+  left: var(--slide-left, 0);
+  top: 0;
+  z-index: 0;
+  transform-origin: var(--slide-direction, 'left');
+  animation: slideIn 0.3s ease-in-out;
+}
+
+@keyframes slideIn {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+/* Style for all list items */
+.nav-links li {
+  @apply rounded-3xl px-4 py-2 relative z-10 transition-colors duration-300;
+}
+
+/* Active link text color */
+.nav-links .active li {
+  @apply text-black;
 }
