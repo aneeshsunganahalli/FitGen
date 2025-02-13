@@ -8,8 +8,8 @@ export default function Navbar() {
 
   return (
     <div className='flex items-center justify-between w-full p-10 px-15 bg-black shadow-xl'>
-      <p onClick={() => navigate('/')} className='pl-4 text-2xl font-bold cursor-pointer'>FitGen</p>
-      <ul className='flex items-center gap-10 font-semibold text-gray-500 px-5'>
+      <p onClick={() => navigate('/')} className='text-2xl font-bold cursor-pointer'>FitGen</p>
+      <ul className='flex items-center gap-10 font-semibold text-gray-500 px-5 pr-10'>
         <NavLink to={'/'}><li>Home</li></NavLink>
         <NavLink to={'/workouts'}><li>Workouts</li></NavLink>
         <NavLink to={'/about'}><li>About</li></NavLink>
