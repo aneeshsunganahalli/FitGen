@@ -15,11 +15,12 @@ export default function OAuth() {
 
       const result = await signInWithPopup(auth, provider);
 
-      const res = await fetch('/api/auth/google', {
+      const res = await fetch('http://localhost:5000/api/auth/google', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
+        credentials: 'include',
         body: JSON.stringify({
           name: result.user.displayName,
           email: result.user.email,
@@ -27,11 +28,14 @@ export default function OAuth() {
         })
       })
 
+      if (!res.ok) {
+        throw new Error(`HTTP error! status: ${res.status}`);
+      }
       const data = await res.json();
       dispatch(signInSuccess(data));
       navigate('/');
     } catch (error) {
-      console.log("Could not sign in with Google", error);
+      console.error("Could not sign in with Google", error);
     }
   }
 
