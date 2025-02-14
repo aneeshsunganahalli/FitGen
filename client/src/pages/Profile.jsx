@@ -2,15 +2,17 @@ import React from 'react'
 import { useRef, useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import Navbar from '../components/Navbar'
-import { signOutFailure, signOutSuccess, signOutStart, deleteUserSuccess, deleteUserFailure, deleteUserStart, updateUserFailure, updateUserStart, updateUserSuccess } from '../redux/user/userSlice.js';
+import {  deleteUserSuccess, deleteUserFailure, deleteUserStart, updateUserFailure, updateUserStart, updateUserSuccess } from '../redux/user/userSlice.js';
 import { getDownloadURL, getStorage, ref, uploadBytesResumable } from 'firebase/storage';
 import { app } from '../firebase.js';
+import { useNavigate } from 'react-router-dom';
 
 export default function Profile() {
 
   const { currentUser,loading } = useSelector(state => state.user)
   const dispatch = useDispatch()
   const [formData, setFormData] = useState({});
+  const navigate = useNavigate();
 
 
   const fileRef = useRef(null);
@@ -84,22 +86,6 @@ export default function Profile() {
     )
   }
 
-  const handleSignOut = async () => {
-    try {
-      const res = await fetch('http://localhost:5000/api/auth/out', {
-        method: 'GET',
-        credentials: 'include',
-      });
-      const data = await res.json();
-      if (data.success === false) {
-        dispatch(signOutFailure(data.message));
-        return;
-      }
-      dispatch(signOutSuccess());
-    } catch (error) {
-      dispatch(signOutFailure(error.message));
-    }
-  };
 
   return (
     
@@ -172,12 +158,6 @@ export default function Profile() {
           <button disabled={loading} className=' bg-black text-white rounded-3xl p-3 uppercase hover:opacity-90 disabled:opacity-80'>{loading ? 'Loading...' : "Update"}</button>
 
         </form>
-        <button 
-          onClick={handleSignOut}
-          className='bg-red-700 text-white rounded-lg p-3 uppercase hover:opacity-95'
-        >
-          Sign Out
-        </button>
       </div>
     </>
   )

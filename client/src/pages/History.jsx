@@ -80,8 +80,8 @@ export default function History() {
               </div>
               
               <div className="text-sm text-gray-300 mb-2">
-                <span className="mr-4">Level: {workout.fitnessLevel}</span>
-                <span>Equipment: {workout.availableEquipment}</span>
+                <span className="mr-4">Level:  {workout.fitnessLevel}</span>
+                <span>Equipment:  {workout.availableEquipment}</span>
               </div>
 
               <div className="mt-3">
