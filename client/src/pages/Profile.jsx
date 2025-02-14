@@ -84,7 +84,25 @@ export default function Profile() {
     )
   }
 
+  const handleSignOut = async () => {
+    try {
+      const res = await fetch('http://localhost:5000/api/auth/out', {
+        method: 'GET',
+        credentials: 'include',
+      });
+      const data = await res.json();
+      if (data.success === false) {
+        dispatch(signOutFailure(data.message));
+        return;
+      }
+      dispatch(signOutSuccess());
+    } catch (error) {
+      dispatch(signOutFailure(error.message));
+    }
+  };
+
   return (
+    
     <>
       <Navbar />
       <div id="profile-form"  className='max-w-4xl mx-auto pt-32'>
@@ -154,6 +172,12 @@ export default function Profile() {
           <button disabled={loading} className=' bg-black text-white rounded-3xl p-3 uppercase hover:opacity-90 disabled:opacity-80'>{loading ? 'Loading...' : "Update"}</button>
 
         </form>
+        <button 
+          onClick={handleSignOut}
+          className='bg-red-700 text-white rounded-lg p-3 uppercase hover:opacity-95'
+        >
+          Sign Out
+        </button>
       </div>
     </>
   )

@@ -4,9 +4,9 @@ import Home from './pages/Home'
 import SignIn from './pages/SignIn'
 import SignUp from './pages/SignUp'
 import Workouts from './pages/Workouts'
-import Contact from './pages/Contact'
 import About from './pages/About'
 import Profile from './pages/Profile'
+import History from './pages/History'
 
 export default function App() {
   return (
@@ -16,7 +16,7 @@ export default function App() {
           <Route path='/' element={<Home />} />
           <Route path='/workouts' element={<Workouts />} />
           <Route path='/about' element={<About />} />
-          <Route path='/contact' element={<Contact />} />
+          <Route path='/history' element={<History />} />
           <Route path="/sign-in" element={<SignIn />} />
           <Route path="/sign-up" element={<SignUp />} />
           <Route path="/profile" element={<Profile />} />

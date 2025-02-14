@@ -5,7 +5,7 @@ export default function About() {
   return (
     <>
       <Navbar />
-      <div className='flex flex-col justify-center items-center'>
+      <div className='flex flex-col justify-center items-center mt-30'>
       <div className='text-center text-2xl pt-10 text-white'>
         <p>ABOUT <span className='text-white font-medium'>US</span></p>
       </div>

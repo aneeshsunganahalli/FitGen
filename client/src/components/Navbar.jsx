@@ -45,11 +45,11 @@ export default function Navbar() {
         <NavLink to={'/workouts'} className={({isActive}) => isActive ? 'active' : ''}>
           <li>Workouts</li>
         </NavLink>
+        <NavLink to={'/history'} className={({isActive}) => isActive ? 'active' : ''}>
+          <li>History</li>
+        </NavLink>
         <NavLink to={'/about'} className={({isActive}) => isActive ? 'active' : ''}>
           <li>About</li>
-        </NavLink>
-        <NavLink to={'/contact'} className={({isActive}) => isActive ? 'active' : ''}>
-          <li>Contact</li>
         </NavLink>
       </ul>
       {

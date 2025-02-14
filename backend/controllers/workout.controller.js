@@ -118,3 +118,14 @@ export const generateWorkout = async (req, res) => {
     });
   }
 };
+
+export const getUserWorkouts = async (req, res, next) => {
+  try {
+    const workouts = await Workout.find({ userId: req.user.id })
+      .sort({ date: -1 }); // Sort by date, newest first
+    
+    res.status(200).json(workouts);
+  } catch (error) {
+    next(error);
+  }
+};
