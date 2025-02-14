@@ -71,9 +71,6 @@ export default function Navbar() {
         <NavLink to={'/history'} className={({ isActive }) => isActive ? 'active' : ''}>
           <li>History</li>
         </NavLink>
-        <NavLink to={'/about'} className={({ isActive }) => isActive ? 'active' : ''}>
-          <li>About</li>
-        </NavLink>
       </ul>
       {
         currentUser ? (

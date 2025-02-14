@@ -1,6 +1,7 @@
 import React from 'react'
 import Navbar from '../components/Navbar'
 import { useNavigate } from 'react-router-dom'
+import About from './About'
 
 export default function Home() {
 
@@ -37,6 +38,7 @@ export default function Home() {
           </div>
         </div>
       </div>
+      <About />
     </>
   )
 }

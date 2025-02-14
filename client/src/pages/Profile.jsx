@@ -9,7 +9,7 @@ import { useNavigate } from 'react-router-dom';
 
 export default function Profile() {
 
-  const { currentUser,loading } = useSelector(state => state.user)
+  const { currentUser,loading, error } = useSelector(state => state.user)
   const dispatch = useDispatch()
   const [formData, setFormData] = useState({});
   const navigate = useNavigate();
@@ -86,6 +86,30 @@ export default function Profile() {
     )
   }
 
+  const handleDeleteUser = async () => {
+    try {
+      // Show confirmation dialog
+      const confirmed = window.confirm('Are you sure you want to delete your account? This action cannot be undone.');
+      if (!confirmed) return;
+
+      dispatch(deleteUserStart());
+      const res = await fetch(`http://localhost:5000/api/user/delete/${currentUser._id}`, {
+        method: 'DELETE',
+        credentials: 'include',
+      });
+
+      const data = await res.json();
+      if (data.success === false) {
+        dispatch(deleteUserFailure(data.message));
+        return;
+      }
+
+      dispatch(deleteUserSuccess());
+      navigate('/sign-in');
+    } catch (error) {
+      dispatch(deleteUserFailure(error.message));
+    }
+  };
 
   return (
     
@@ -155,8 +179,24 @@ export default function Profile() {
             </div>
           </div>
 
-          <button disabled={loading} className=' bg-black text-white rounded-3xl p-3 uppercase hover:opacity-90 disabled:opacity-80'>{loading ? 'Loading...' : "Update"}</button>
+          <div className='flex flex-col gap-4 mt-5'>
+            <button 
+              disabled={loading} 
+              className='bg-black text-white rounded-3xl p-3 uppercase hover:opacity-90 disabled:opacity-80'
+            >
+              {loading ? 'Loading...' : "Update"}
+            </button>
+            
+            <button 
+              onClick={handleDeleteUser}
+              type='button'
+              className='bg-red-900 text-white rounded-3xl p-3 uppercase hover:opacity-90'
+            >
+              Delete Account
+            </button>
+          </div>
 
+          {error && <p className='text-red-900 mt-5'>{error}</p>}
         </form>
       </div>
     </>
