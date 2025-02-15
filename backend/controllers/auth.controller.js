@@ -62,57 +62,37 @@ export const signup = async (req, res) => {
   }
 };
 
-export const signin = async (req, res) => {
-  const { email, password } = req.body;
-
+export const signin = async (req, res, next) => {
   try {
-    // Validate required fields
-    if (!email || !password) {
-      return res.status(400).json({
-        error: 'Missing required fields',
-        details: 'Email and password are required'
-      });
-    }
-
-    // Find user
+    const { email, password } = req.body;
     const validUser = await User.findOne({ email });
+    
     if (!validUser) {
-      return res.status(404).json({
-        error: 'User not found',
-        details: 'Invalid credentials'
-      });
+      return res.status(404).json({ message: 'User not found' });
     }
 
-    // Verify password
     const validPassword = bcryptjs.compareSync(password, validUser.password);
     if (!validPassword) {
-      return res.status(401).json({
-        error: 'Wrong credentials',
-        details: 'Invalid credentials'
-      });
+      return res.status(401).json({ message: 'Wrong credentials' });
     }
 
-    // Create token
     const token = jwt.sign(
-      { id: validUser._id }, 
+      { _id: validUser._id }, 
       process.env.JWT_SECRET
     );
 
-    // Remove password from response
-    const { password: pass, ...rest } = validUser._doc;
-
-    // Set cookie and send response
-    res
-      .cookie('access_token', token, { httpOnly: true })
-      .status(200)
-      .json(rest);
-
-  } catch (error) {
-    console.error('Signin error:', error);
-    res.status(500).json({
-      error: 'Error signing in',
-      details: error.message
+    // Set the cookie with proper options
+    res.cookie('access_token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 24 * 60 * 60 * 1000 // 24 hours
     });
+
+    const { password: pass, ...rest } = validUser._doc;
+    res.status(200).json(rest);
+  } catch (error) {
+    next(error);
   }
 };
 

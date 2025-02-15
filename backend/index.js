@@ -6,7 +6,6 @@ import connectDB from "./config/mongodb.js";
 import authRouter from './routes/auth.route.js';
 import workoutRouter from './routes/workout.route.js';
 import userRouter from './routes/user.route.js';
-import foodRouter from './routes/food.route.js';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 
@@ -19,9 +18,10 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 app.use(cors({ 
-  origin: ['http://localhost:5173', 'http://localhost:5000'], 
+  origin: ['http://localhost:5175','http://localhost:5173', 'http://localhost:5000'], 
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 
 app.use(express.json())
@@ -41,7 +41,7 @@ const server = app.listen(PORT, () => {
 app.use('/api/auth', authRouter);
 app.use('/api/workouts', workoutRouter);
 app.use('/api/user', userRouter);
-app.use('/api/food', foodRouter)
+
 
 app.use(express.static(join(__dirname, '/client/dist')))
 
@@ -49,7 +49,8 @@ app.get('*', (req,res) => {
   res.sendFile(join(__dirname, 'client', 'dist', 'index.html'))
 })
 
-app.use((err,req,res,next) => {
+app.use((err, req, res, next) => {
+  console.error(err.stack);
   const statusCode = err.statusCode || 500;
   const message = err.message || "Internal Server Error";
   return res.status(statusCode).json({
