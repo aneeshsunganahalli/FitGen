@@ -66,3 +66,7 @@ li {
 .nav-links .active li {
   @apply text-black;
 }
+
+.group:hover .hidden {
+  display: block;
+}

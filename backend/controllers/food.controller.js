@@ -85,7 +85,7 @@ export const getUserFoodLog = async (req, res) => {
 
   try {
     // Query to fetch food logs for the authenticated user
-    const foodLogs = await FoodLog.find({ userId: req.user.id }).sort({ date: -1 });
+    const foodLogs = await FoodLog.find({ userId: req.user.id }).sort({ date: -1 }).select('foodName calories servingSize date');
 
     // Calculate total calories from the fetched logs
     const totalCalories = foodLogs.reduce((sum, log) => sum + log.calories, 0);

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+import { Dumbbell, Calendar, Activity, Package } from 'lucide-react';
 import Navbar from '../components/Navbar';
 
 export default function History() {
@@ -39,12 +40,23 @@ export default function History() {
     fetchWorkouts();
   }, [currentUser, navigate]);
 
+  const capitalizeWords = (str) => {
+    return str.replace(/\b\w/g, char => char.toUpperCase());
+  };
+
   if (loading) {
     return (
       <>
         <Navbar />
-        <div className="container mx-auto px-4 py-8">
-          <p className="text-white">Loading...</p>
+        <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black mt-30">
+          <div className="container mx-auto px-4 py-8">
+            <div className="flex items-center justify-center h-64">
+              <div className="animate-pulse flex flex-col items-center">
+                <Dumbbell size={48} className="text-gray-500 mb-4 animate-bounce" />
+                <p className="text-gray-400 text-xl">Loading your workouts...</p>
+              </div>
+            </div>
+          </div>
         </div>
       </>
     );
@@ -53,80 +65,132 @@ export default function History() {
   return (
     <>
       <Navbar />
-      <div className="container mx-auto px-4 py-8 mt-30">
-        <h1 className="text-3xl font-bold mb-6 text-white">Workout History</h1>
-        
-        {error && (
-          <div className="text-red-400 mb-4">
-            Error: {error}
+      <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black mt-30">
+        <div className="container mx-auto px-4 py-8">
+          <div className="flex items-center justify-between mb-8">
+            <h1 className="text-4xl font-bold text-white tracking-tight">
+              Workout History
+            </h1>
+            <div className="bg-indigo-600 text-white px-4 py-2 rounded-lg shadow-lg">
+              {workouts.length} Total Workouts
+            </div>
           </div>
-        )}
 
-        <div className="grid gap-4">
-          {workouts.map((workout) => (
-            <div 
-              key={workout._id} 
-              className="bg-[#111010] p-4 rounded-lg border border-gray-800 text-white"
-            >
-              <div className="flex justify-between items-start mb-2">
-                <h2 className="text-xl font-semibold">{workout.goal}</h2>
-                <span className="text-sm text-gray-400">
-                  {new Date(workout.date).toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'short',
-                    day: 'numeric'
-                  })}
-                </span>
-              </div>
-              
-              <div className="text-sm text-gray-300 mb-2">
-                <span className="mr-4">Level:  {workout.fitnessLevel}</span>
-                <span>Equipment:  {workout.availableEquipment}</span>
-              </div>
+          {error && (
+            <div className="bg-red-500/10 border border-red-500 text-red-400 px-4 py-3 rounded-lg mb-6">
+              <p className="font-medium">Error: {error}</p>
+            </div>
+          )}
 
-              <div className="mt-3">
-                <h3 className="font-medium mb-2">Exercises:</h3>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                  {workout.exercises.map((exercise, index) => (
-                    <div 
-                      key={index}
-                      className={`
-                        px-3 py-2 rounded text-sm relative group
-                        transition-all duration-200 ease-in-out
-                        ${hoveredExercise === `${workout._id}-${index}` 
-                          ? 'bg-white text-black' 
-                          : 'bg-black text-white'}
-                      `}
-                      onMouseEnter={() => setHoveredExercise(`${workout._id}-${index}`)}
-                      onMouseLeave={() => setHoveredExercise(null)}
-                    >
-                      {exercise.name}
-                      <div 
-                        className={`
-                          absolute z-20 left-0 w-full transform
-                          bg-black text-white border border-gray-800 rounded p-2 shadow-lg
-                          transition-all duration-200 ease-in-out
-                          top-full mt-2
-                          ${hoveredExercise === `${workout._id}-${index}` 
-                            ? 'opacity-100 visible translate-y-0' 
-                            : 'opacity-0 invisible -translate-y-2'}
-                        `}
-                      >
-                        <p>Sets: {exercise.sets}</p>
-                        {exercise.reps !== 0 && <p>Reps: {exercise.reps}</p>}
-                        {exercise.duration !== 'N/A' && <p>Duration: {exercise.duration}</p>}
+          <div className="grid gap-6">
+            {workouts.map((workout) => (
+              <div
+                key={workout._id}
+                className="bg-gray-800/50 backdrop-blur-sm p-6 rounded-xl border border-gray-700/50 shadow-xl hover:shadow-indigo-500/10 transition-all duration-300"
+              >
+                <div className="flex justify-between items-start mb-4">
+                  <div className="flex items-center gap-3">
+                    <div className="bg-indigo-600 p-2 rounded-lg">
+                      <Activity size={24} className="text-white" />
+                    </div>
+                    <div>
+                      <h2 className="text-2xl font-bold text-white mb-1">{workout.goal}</h2>
+                      <div className="flex items-center gap-2 text-gray-400">
+                        <Calendar size={16} />
+                        <span>
+                          {new Date(workout.date).toLocaleDateString('en-US', {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric'
+                          })}
+                        </span>
                       </div>
                     </div>
-                  ))}
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4 mb-4">
+                  <div className="bg-gray-900/50 p-3 rounded-lg">
+                    <div className="flex items-center gap-2 text-gray-400 mb-1">
+                      <Activity size={16} />
+                      <span className="text-sm">Level</span>
+                    </div>
+                    <p className="text-white font-medium">{workout.fitnessLevel}</p>
+                  </div>
+                  <div className="bg-gray-900/50 p-3 rounded-lg">
+                    <div className="flex items-center gap-2 text-gray-400 mb-1">
+                      <Package size={16} />
+                      <span className="text-sm">Equipment</span>
+                    </div>
+                    <p className="text-white font-medium">{workout.availableEquipment}</p>
+                  </div>
+                </div>
+
+                <div className="mt-4">
+                  <h3 className="text-lg font-semibold text-white mb-3">Exercises</h3>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                    {workout.exercises.map((exercise, index) => (
+                      <div
+                        key={index}
+                        className="relative group"
+                      >
+                        <div
+                          className={`
+                            p-3 rounded-lg text-sm transition-all duration-200
+                            ${hoveredExercise === `${workout._id}-${index}`
+                              ? 'bg-indigo-600 text-white'
+                              : 'bg-gray-900/50 text-gray-300'}
+                          `}
+                          onMouseEnter={() => setHoveredExercise(`${workout._id}-${index}`)}
+                          onMouseLeave={() => setHoveredExercise(null)}
+                        >
+                          <div className="flex items-center gap-2">
+                            <Dumbbell size={16} />
+                            <span>{exercise.name}</span>
+                          </div>
+                          
+                          <div
+                            className={`
+                              absolute z-20 left-0 w-full transform
+                              bg-gray-800 text-white border border-gray-700 rounded-lg p-3 shadow-xl
+                              transition-all duration-200
+                              top-full mt-2
+                              ${hoveredExercise === `${workout._id}-${index}`
+                                ? 'opacity-100 visible translate-y-0'
+                                : 'opacity-0 invisible -translate-y-2'}
+                            `}
+                          >
+                            <p className="flex items-center gap-2 mb-1">
+                              <span className="text-gray-400">Sets:</span> {exercise.sets}
+                            </p>
+                            {exercise.reps !== 0 && (
+                              <p className="flex items-center gap-2 mb-1">
+                                <span className="text-gray-400">Reps:</span> {exercise.reps}
+                              </p>
+                            )}
+                            {exercise.duration !== 'N/A' && (
+                              <p className="flex items-center gap-2">
+                                <span className="text-gray-400">Duration:</span> {exercise.duration}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
 
-        {workouts.length === 0 && !error && (
-          <p className="text-white text-center">No workout history found.</p>
-        )}
+          {workouts.length === 0 && !error && (
+            <div className="flex flex-col items-center justify-center h-64 bg-gray-800/50 rounded-xl border border-gray-700/50">
+              <Dumbbell size={48} className="text-gray-500 mb-4" />
+              <p className="text-gray-400 text-xl">No workout history found</p>
+              <p className="text-gray-500 mt-2">Time to start your fitness journey!</p>
+            </div>
+          )}
+        </div>
       </div>
     </>
   );

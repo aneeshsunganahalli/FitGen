@@ -5,7 +5,7 @@ export const verifyToken = async (req, res, next) => {
   const token = req.cookies.access_token;
   
   if (!token) {
-    return next(new errorHandler(401, 'You are not authenticated!'));
+    return next(errorHandler(401, 'You are not authenticated!'));
   }
 
   try {
@@ -13,6 +13,6 @@ export const verifyToken = async (req, res, next) => {
     req.user = decoded;
     next();
   } catch (error) {
-    return next(new errorHandler(401, 'Token is not valid!'));
+    return next(errorHandler(401, 'Token is not valid!'));
   }
 };
