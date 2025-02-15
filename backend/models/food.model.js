@@ -14,6 +14,10 @@ const foodLogSchema = new mongoose.Schema({
     type: Number,
     required: true
   },
+  servingSize: {
+    type: String,
+    required: true
+  },
   date: {
     type: Date,
     default: Date.now
