@@ -1,37 +1,18 @@
-import { errorHandler } from "./error.js";
-import jwt from "jsonwebtoken";
+import jwt from 'jsonwebtoken';
+import { errorHandler } from './error.js';
 
 export const verifyToken = async (req, res, next) => {
+  const token = req.cookies.access_token;
+  
+  if (!token) {
+    return next(new errorHandler(401, 'You are not authenticated!'));
+  }
+
   try {
-    const token = req.cookies.access_token;
-    console.log('Received token:', token); // Debug log
-    
-    if (!token) {
-      return res.status(401).json({ message: 'No token provided' });
-    }
-
-    try {
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      console.log('Decoded token:', decoded); // Debug log
-      
-      if (!decoded || !decoded._id) {
-        return res.status(401).json({ message: 'Invalid token structure' });
-      }
-
-      req.user = decoded;
-      next();
-    } catch (jwtError) {
-      console.error('JWT verification failed:', jwtError);
-      return res.status(401).json({ 
-        message: 'Invalid token',
-        error: jwtError.message 
-      });
-    }
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decoded;
+    next();
   } catch (error) {
-    console.error('Token middleware error:', error);
-    return res.status(401).json({ 
-      message: 'Authentication error',
-      error: error.message 
-    });
+    return next(new errorHandler(401, 'Token is not valid!'));
   }
 };

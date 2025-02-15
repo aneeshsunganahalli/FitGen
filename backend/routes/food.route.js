@@ -9,7 +9,7 @@ import {
 const router = express.Router();
 
 // Search foods from USDA database
-router.get('/search', verifyToken, searchFoods);
+router.get('/search',verifyToken,  searchFoods);
 
 // Add manual food entry
 router.post('/add', verifyToken, addFoodManually);
