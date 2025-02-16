@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import Navbar from '../components/Navbar';
+import { Dumbbell, Activity, Package } from 'lucide-react';
 
 export default function Workouts() {
   const { currentUser } = useSelector(state => state.user);
@@ -56,17 +57,22 @@ export default function Workouts() {
 
   return (
     <>
-      <Navbar />
-      <div className="container mx-auto px-4 py-8 mt-30">
-        <h1 className="text-3xl font-bold mb-6 text-white">Generate Workout Plan</h1>
-        
-        <form onSubmit={handleSubmit} className="max-w-md mb-8">
-          <div className="mb-4">
-            <label className="block mb-2 text-white">Fitness Goal:</label>
+    <Navbar />
+    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black mt-30">
+      <div className="container mx-auto px-4 py-8">
+        <div className="flex items-center justify-between mb-8">
+          <h1 className="text-4xl font-bold text-white tracking-tight">
+            Generate Workout Plan
+          </h1>
+        </div>
+
+        <form onSubmit={handleSubmit} className="max-w-md space-y-6 mb-8">
+          <div className="space-y-2">
+            <label className="block text-white">Fitness Goal:</label>
             <select
               value={workoutForm.goal}
               onChange={(e) => setWorkoutForm(prev => ({...prev, goal: e.target.value}))}
-              className="w-full p-2 border rounded bg-gray-800 text-white border-gray-700"
+              className="w-full p-3 border rounded-lg bg-gray-800/50 text-white border-gray-700 backdrop-blur-sm focus:border-indigo-500 transition-all duration-300"
               required
             >
               <option value="">Select a goal</option>
@@ -77,12 +83,12 @@ export default function Workouts() {
             </select>
           </div>
 
-          <div className="mb-4">
-            <label className="block mb-2 text-white">Fitness Level:</label>
+          <div className="space-y-2">
+            <label className="block text-white">Fitness Level:</label>
             <select
               value={workoutForm.fitnessLevel}
               onChange={(e) => setWorkoutForm(prev => ({...prev, fitnessLevel: e.target.value}))}
-              className="w-full p-2 border rounded bg-gray-800 text-white border-gray-700"
+              className="w-full p-3 border rounded-lg bg-gray-800/50 text-white border-gray-700 backdrop-blur-sm focus:border-indigo-500 transition-all duration-300"
               required
             >
               <option value="">Select level</option>
@@ -92,13 +98,13 @@ export default function Workouts() {
             </select>
           </div>
 
-          <div className="mb-4">
-            <label className="block mb-2 text-white">Available Equipment:</label>
+          <div className="space-y-2">
+            <label className="block text-white">Available Equipment:</label>
             <input
               type="text"
               value={workoutForm.availableEquipment}
               onChange={(e) => setWorkoutForm(prev => ({...prev, availableEquipment: e.target.value}))}
-              className="w-full p-2 border rounded bg-gray-800 text-white border-gray-700"
+              className="w-full p-3 border rounded-lg bg-gray-800/50 text-white border-gray-700 backdrop-blur-sm focus:border-indigo-500 transition-all duration-300"
               placeholder="e.g., Dumbbells, Resistance bands, etc."
               required
             />
@@ -107,41 +113,92 @@ export default function Workouts() {
           <button
             type="submit"
             disabled={loading}
-            className="bg-white font-semibold text-black px-4 py-2 mt-2 rounded hover:bg-gray-200 disabled:bg-gray-600 disabled:text-gray-400 hover:scale-105 transition-all duration-300"
+            className="w-full bg-indigo-600 text-white px-4 py-3 rounded-lg font-semibold hover:bg-indigo-500 disabled:bg-gray-600 disabled:text-gray-400 transform hover:scale-102 transition-all duration-300"
           >
-            {loading ? 'Generating...' : 'Generate Workout'}
+            {loading ? (
+              <div className="flex items-center justify-center gap-2">
+                <Dumbbell size={20} className="animate-bounce" />
+                <span>Generating...</span>
+              </div>
+            ) : (
+              'Generate Workout'
+            )}
           </button>
         </form>
 
         {error && (
-          <div className="text-red-400 mb-4">
-            Error: {error}
+          <div className="bg-red-500/10 border border-red-500 text-red-400 px-4 py-3 rounded-lg mb-6">
+            <p className="font-medium">Error: {error}</p>
           </div>
         )}
 
         {workout && (
-          <div className="bg-[#111010] p-6 rounded-lg shadow-md text-white border border-gray-800">
-            <h2 className="text-2xl font-bold mb-4">Your Workout Plan</h2>
-            <div className="mb-4">
-              <p><strong>Goal:</strong> {workout.goal}</p>
-              <p><strong>Fitness Level:</strong> {workout.fitnessLevel}</p>
-              <p><strong>Equipment:</strong> {workout.availableEquipment}</p>
+          <div className="bg-gray-800/50 backdrop-blur-sm p-6 rounded-xl border border-gray-700/50 shadow-xl">
+            <h2 className="text-2xl font-bold text-white mb-6">Your Workout Plan</h2>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+              <div className="bg-gray-900/50 p-4 rounded-lg">
+                <div className="flex items-center gap-2 text-gray-400 mb-1">
+                  <Activity size={16} />
+                  <span>Goal</span>
+                </div>
+                <p className="text-white font-medium">{workout.goal}</p>
+              </div>
+              
+              <div className="bg-gray-900/50 p-4 rounded-lg">
+                <div className="flex items-center gap-2 text-gray-400 mb-1">
+                  <Dumbbell size={16} />
+                  <span>Level</span>
+                </div>
+                <p className="text-white font-medium">{workout.fitnessLevel}</p>
+              </div>
+              
+              <div className="bg-gray-900/50 p-4 rounded-lg">
+                <div className="flex items-center gap-2 text-gray-400 mb-1">
+                  <Package size={16} />
+                  <span>Equipment</span>
+                </div>
+                <p className="text-white font-medium">{workout.availableEquipment}</p>
+              </div>
             </div>
             
-            <h3 className="text-xl font-semibold mb-3">Exercises:</h3>
-            <div className="grid gap-4">
-              {workout.exercises.map((exercise, index) => (
-                <div key={index} className="border border-gray-800 p-4 rounded bg-black">
-                  <h4 className="font-bold">{exercise.name}</h4>
-                  <p>Sets: {exercise.sets}</p>
-                  {exercise.reps !== 0 && <p>Reps: {exercise.reps}</p>}
-                  {exercise.duration !== 'N/A' && <p>Duration: {exercise.duration}</p>}
-                </div>
-              ))}
+            <div className="space-y-4">
+              <h3 className="text-xl font-semibold text-white">Exercises</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {workout.exercises.map((exercise, index) => (
+                  <div
+                    key={index}
+                    className="bg-gray-900/50 p-4 rounded-lg border border-gray-700/50 hover:border-indigo-500/50 transition-colors duration-300"
+                  >
+                    <div className="flex items-center gap-2 mb-3">
+                      <div className="bg-indigo-600/20 p-2 rounded">
+                        <Dumbbell size={20} className="text-indigo-400" />
+                      </div>
+                      <h4 className="font-bold text-white">{exercise.name}</h4>
+                    </div>
+                    <div className="space-y-1 text-gray-300">
+                      <p className="flex items-center gap-2">
+                        <span className="text-gray-400">Sets:</span> {exercise.sets}
+                      </p>
+                      {exercise.reps !== 0 && (
+                        <p className="flex items-center gap-2">
+                          <span className="text-gray-400">Reps:</span> {exercise.reps}
+                        </p>
+                      )}
+                      {exercise.duration !== 'N/A' && (
+                        <p className="flex items-center gap-2">
+                          <span className="text-gray-400">Duration:</span> {exercise.duration}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         )}
       </div>
+    </div>
     </>
   );
 }
