@@ -23,7 +23,7 @@ export default function Home() {
 
             <p className='text-7xl font-semibold mt-50 mb-10'>Elevate your <br />workout</p>
 
-            <p className=''>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt </p>
+            <p className=''>Join our fitness website today to get AI-personalized workouts, track your progress, and achieve your fitness goals! </p>
 
             <div className=''>
               <button onClick={() => navigate('/sign-up')} className='bg-white text-black text-sm font-semibold py-3 px-6 rounded-lg mt-15 hover:opacity-85 hover:scale-105 transition-all duration-300'>Get started</button>

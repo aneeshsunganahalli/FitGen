@@ -1,10 +1,11 @@
-import React, { useEffect } from 'react'
-import { useSelector, useDispatch } from 'react-redux'
-import { Link, NavLink, useNavigate, useLocation } from 'react-router-dom'
-import { signOutStart, signOutSuccess, signOutFailure } from '../redux/user/userSlice'
+import React, { useEffect } from 'react';
+import { NavLink, useNavigate, useLocation } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { signOutStart, signOutSuccess, signOutFailure } from '../redux/user/userSlice';
+import { Home, Dumbbell, Apple, History, LogOut, User } from 'lucide-react';
 
-export default function Navbar() {
-  const { currentUser } = useSelector(state => state.user);
+const Navbar = () => {
+  const {currentUser} = useSelector(state => state.user)
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useDispatch();
@@ -18,17 +19,16 @@ export default function Navbar() {
         const navLinks = document.querySelector('.nav-links');
         const direction = previousActive && previousActive.offsetLeft > activeLink.offsetLeft ? 'right' : 'left';
 
-        navLinks.style.setProperty('--slide-direction', direction);
-        navLinks.style.setProperty('--slide-width', `${activeLink.offsetWidth}px`);
-        navLinks.style.setProperty('--slide-left', `${activeLink.offsetLeft}px`);
+        requestAnimationFrame(() => {
+          navLinks.style.setProperty('--slide-direction', direction);
+          navLinks.style.setProperty('--slide-width', `${activeLink.offsetWidth}px`);
+          navLinks.style.setProperty('--slide-left', `${activeLink.offsetLeft}px`);
+        });
 
-        // Remove previous-active class from all links
         document.querySelectorAll('.nav-links .previous-active').forEach(el => {
           el.classList.remove('previous-active');
         });
-
-        // Add previous-active class to current active link
-        document.querySelector('.nav-links .active').classList.add('previous-active');
+        document.querySelector('.nav-links .active')?.classList.add('previous-active');
       }
     };
 
@@ -37,61 +37,112 @@ export default function Navbar() {
     return () => window.removeEventListener('resize', updateSlider);
   }, [location.pathname]);
 
-    const logout = async () => {
-      try {
-        dispatch(signOutStart());
-        const res = await fetch('http://localhost:5000/api/auth/logout', {
-          method: 'GET',
-          credentials: 'include'
-        });
-        
-        if (res.ok) {
-          localStorage.removeItem('access_token');
-          dispatch(signOutSuccess());
-          navigate('/sign-in');
-        } else {
-          dispatch(signOutFailure('Logout failed'));
-        }
-      } catch (error) {
-        console.error('Logout failed:', error);
-        dispatch(signOutFailure(error.message));
+  const logout = async () => {
+    try {
+      dispatch(signOutStart());
+      const res = await fetch('http://localhost:5000/api/auth/logout', {
+        method: 'GET',
+        credentials: 'include'
+      });
+      
+      if (res.ok) {
+        localStorage.removeItem('access_token');
+        dispatch(signOutSuccess());
+        navigate('/sign-in');
+      } else {
+        dispatch(signOutFailure('Logout failed'));
       }
+    } catch (error) {
+      console.error('Logout failed:', error);
+      dispatch(signOutFailure(error.message));
     }
+  };
+
+  const navItems = [
+    { path: '/', label: 'Home', icon: Home },
+    { path: '/workouts', label: 'Workouts', icon: Dumbbell },
+    { path: '/diet', label: 'Diet', icon: Apple },
+    { path: '/history', label: 'History', icon: History },
+  ];
 
   return (
-    <div className='fixed top-0 left-0 right-0 flex items-center justify-between w-full p-10 px-15 bg-black shadow-xl z-50'>
-      <p onClick={() => navigate('/')} className='text-2xl font-bold cursor-pointer'>FitGen</p>
-      <ul className='nav-links font-semibold text-gray-500 px-5 pr-10'>
-        <NavLink to={'/'} className={({ isActive }) => isActive ? 'active' : ''}>
-          <li>Home</li>
-        </NavLink>
-        <NavLink to={'/workouts'} className={({ isActive }) => isActive ? 'active' : ''}>
-          <li>Workouts</li>
-        </NavLink>
-        <NavLink to={'/diet'} className={({ isActive }) => isActive ? 'active' : ''}>
-          <li>Diet</li>
-        </NavLink>
-        <NavLink to={'/history'} className={({ isActive }) => isActive ? 'active' : ''}>
-          <li>History</li>
-        </NavLink>
-        
-      </ul>
-      {
-        currentUser ? (
-          <div className='flex items-center gap-2 cursor-pointer group relative'>
-            <img className='rounded-full h-10 w-10 object-cover' src={currentUser.avatar} alt="Profile" />
-            <div className='absolute top-0 right-0 pt-14 text-base font-medium text-gray-600 z-20 hidden group-hover:block'>
-              <div className='min-w-48 bg-stone-100 flex flex-col rounded gap-4 p-4'>
-                <p onClick={() => navigate('/profile')} className='hover:text-black cursor-pointer'>Profile</p>
-                <p onClick={logout} className='hover:text-black cursor-pointer'>Logout</p>
+    <div className="fixed top-0 left-0 right-0 bg-gray-900/95 backdrop-blur-sm border-b border-gray-800/50 shadow-xl z-50 p-7">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-16">
+          {/* Logo */}
+          <div 
+            onClick={() => navigate('/')} 
+            className="text-2xl font-bold text-white cursor-pointer hover:text-indigo-400 transition-colors duration-200"
+          >
+            FitGen
+          </div>
+
+          {/* Navigation Links */}
+          <nav className=" flex justify-center">
+            <ul className="nav-links  flex justify-center items-center space-x-8 text-lg font-medium">
+              {navItems.map(({ path, label, icon: Icon }) => (
+                <NavLink
+                  key={path}
+                  to={path}
+                  className={({ isActive }) =>
+                    `h-full flex items-center px-2 ${
+                      isActive ? 'active text-white' : 'text-gray-400 hover:text-white'
+                    } transition-colors duration-200`
+                  }
+                >
+                  <li className="flex items-center gap-2">
+                    <Icon size={18} />
+                    {label}
+                  </li>
+                </NavLink>
+              ))}
+            </ul>
+          </nav>
+
+          {/* User Menu */}
+          {currentUser ? (
+            <div className="relative group">
+              <div className="flex items-center gap-3 cursor-pointer">
+                <img 
+                  src={currentUser.avatar} 
+                  alt="Profile" 
+                  className="h-12 w-12 rounded-full object-cover ring-3 ring-gray-800 group-hover:ring-indigo-500 transition-all duration-200"
+                />
+              </div>
+              
+              <div className="absolute right-0 w-48 mt-2 origin-top-right hidden group-hover:block">
+                <div className="bg-gray-800 rounded-lg shadow-lg ring-1 ring-gray-700 overflow-hidden">
+                  <div className="p-1">
+                    <button
+                      onClick={() => navigate('/profile')}
+                      className="flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 rounded-md transition-colors duration-150"
+                    >
+                      <User size={16} />
+                      Profile
+                    </button>
+                    <button
+                      onClick={logout}
+                      className="flex items-center gap-2 w-full px-4 py-2 text-sm text-red-400 hover:bg-gray-700 rounded-md transition-colors duration-150"
+                    >
+                      <LogOut size={16} />
+                      Logout
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-        ) : (
-          <button onClick={() => navigate('/sign-up')} className='bg-white text-black rounded-lg py-3 px-6 font-semibold text-sm shrink-0 hover:opacity-85 hover:scale-105 transition-all duration-300'>Join Now</button>
-        )
-      }
-
+          ) : (
+            <button
+              onClick={() => navigate('/sign-up')}
+              className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-3xl text-sm font-medium transition-all duration-200 hover:scale-105"
+            >
+              Join Now
+            </button>
+          )}
+        </div>
+      </div>
     </div>
-  )
-}
+  );
+};
+
+export default Navbar;

@@ -6,6 +6,7 @@ import {  deleteUserSuccess, deleteUserFailure, deleteUserStart, updateUserFailu
 import { getDownloadURL, getStorage, ref, uploadBytesResumable } from 'firebase/storage';
 import { app } from '../firebase.js';
 import { useNavigate } from 'react-router-dom';
+import { User, Mail, Lock, Upload, Trash2 } from 'lucide-react';
 
 export default function Profile() {
 
@@ -54,7 +55,7 @@ export default function Profile() {
       }
 
       dispatch(updateUserSuccess(data));
-      setUpdateSuccess(true);
+      
     } catch (error) {
       dispatch(updateUserFailure(error.message));
     }
@@ -115,90 +116,126 @@ export default function Profile() {
     
     <>
       <Navbar />
-      <div id="profile-form"  className='max-w-4xl mx-auto pt-32'>
-        <h1 className='text-3xl font-semibold text-center my-7'>Profile</h1>
-        <form onSubmit={handleSubmit} className=' flex flex-col gap-5 bg-white text-black rounded-4xl px-12 py-6 mb-20'>
-          <div className='mt-5 mb-10 mx-auto'>
-            <input onChange={(e) => setFile(e.target.files[0])} type='file' ref={fileRef} hidden accept='image/*' />
-            <img
-              onClick={() => fileRef.current.click()}
-              src={formData.avatar || currentUser.avatar}
-              alt="Profile"
-              className='rounded-full h-48 w-48 object-cover self-center cursor-pointer mt-2 border-1 border-black'
-            />
-            <p className='self-center text-sm'>
-              {fileUploadError ? (<span className='text-red-700'>Error Image Upload (Image must be less than 2MB)</span>)
-                :
-                filePerc > 0 && filePerc < 100 ?
-                  (<span className='text-slate-700'>{`Uploading ${filePerc}%`}</span>)
-                  :
-                  filePerc === 100 ?
-                    (<span className='text-green-700'></span>)
-                    : (
-                      ''
-                    )
-              }
-            </p>
+      <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black pt-32">
+      <div className="container max-w-4xl mx-auto px-4">
+        <h1 className="text-4xl font-bold text-white tracking-tight text-center mb-8">
+          Profile Settings
+        </h1>
+
+        <form onSubmit={handleSubmit} className="bg-gray-800/50 backdrop-blur-sm p-8 rounded-xl border border-gray-700/50 shadow-xl mb-8">
+          {/* Profile Image Section */}
+          <div className="flex flex-col items-center mb-8">
+            <div className="relative group">
+              <input 
+                onChange={(e) => setFile(e.target.files[0])} 
+                type="file" 
+                ref={fileRef} 
+                hidden 
+                accept="image/*" 
+              />
+              <img
+                onClick={() => fileRef.current.click()}
+                src={formData.avatar || currentUser.avatar}
+                alt="Profile"
+                className="h-48 w-48 rounded-full object-cover cursor-pointer transition-all duration-300 group-hover:opacity-75"
+              />
+              <div 
+                onClick={() => fileRef.current.click()}
+                className="absolute inset-0 flex items-center justify-center rounded-full bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
+              >
+                <Upload className="text-white" size={24} />
+              </div>
+            </div>
+            
+            {fileUploadError && (
+              <p className="mt-2 text-red-400 text-sm flex items-center gap-1">
+                Error: Image must be less than 2MB
+              </p>
+            )}
+            {filePerc > 0 && filePerc < 100 && (
+              <div className="mt-2 w-48 bg-gray-700 rounded-full h-1.5">
+                <div 
+                  className="bg-indigo-600 h-1.5 rounded-full transition-all duration-300"
+                  style={{ width: `${filePerc}%` }}
+                />
+              </div>
+            )}
           </div>
 
-          <div className='flex flex-col gap-5'>
-            <div className=''>
-              <p className='font-semibold'>Username</p>
-              <input
-                type='text'
-                placeholder='Username'
-                className='border p-3 rounded-lg w-full'
-                id='username'
-                defaultValue={currentUser.username}
-                onChange={handleChange}
-              />
-            </div>
-
-
+          {/* Form Fields */}
+          <div className="space-y-6">
             <div>
-              <p className='font-semibold'>Email</p>
-              <input
-                type='email'
-                placeholder='Email'
-                className='border p-3 rounded-lg w-full'
-                id='email'
-                defaultValue={currentUser.email}
-                onChange={handleChange}
-              />
+              <label className="block text-white font-medium mb-2">Username</label>
+              <div className="relative">
+                <User className="absolute left-3 top-3 text-gray-400" size={20} />
+                <input
+                  type="text"
+                  placeholder="Username"
+                  className="w-full bg-gray-900/50 text-white border border-gray-700 rounded-lg p-3 pl-10 focus:outline-none focus:ring-2 focus:ring-indigo-600"
+                  id="username"
+                  defaultValue={currentUser.username}
+                  onChange={handleChange}
+                />
+              </div>
             </div>
 
             <div>
-              <p className='font-semibold'>Password</p>
-              <input
-                type='password'
-                placeholder='Password'
-                className='border p-3 rounded-lg w-full'
-                id='password'
-                onChange={handleChange}
-              />
+              <label className="block text-white font-medium mb-2">Email</label>
+              <div className="relative">
+                <Mail className="absolute left-3 top-3 text-gray-400" size={20} />
+                <input
+                  type="email"
+                  placeholder="Email"
+                  className="w-full bg-gray-900/50 text-white border border-gray-700 rounded-lg p-3 pl-10 focus:outline-none focus:ring-2 focus:ring-indigo-600"
+                  id="email"
+                  defaultValue={currentUser.email}
+                  onChange={handleChange}
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-white font-medium mb-2">Password</label>
+              <div className="relative">
+                <Lock className="absolute left-3 top-3 text-gray-400" size={20} />
+                <input
+                  type="password"
+                  placeholder="Password"
+                  className="w-full bg-gray-900/50 text-white border border-gray-700 rounded-lg p-3 pl-10 focus:outline-none focus:ring-2 focus:ring-indigo-600"
+                  id="password"
+                  onChange={handleChange}
+                />
+              </div>
             </div>
           </div>
 
-          <div className='flex flex-col gap-4 mt-5'>
+          {/* Action Buttons */}
+          <div className="mt-8 space-y-4">
             <button 
-              disabled={loading} 
-              className='bg-black text-white rounded-3xl p-3 uppercase hover:opacity-90 disabled:opacity-80'
+              disabled={loading}
+              className="w-full bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg p-3 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed font-medium"
             >
-              {loading ? 'Loading...' : "Update"}
+              {loading ? 'Updating...' : 'Update Profile'}
             </button>
             
             <button 
               onClick={handleDeleteUser}
-              type='button'
-              className='bg-red-900 text-white rounded-3xl p-3 uppercase hover:opacity-90'
+              type="button"
+              className="w-full bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/50 rounded-lg p-3 transition-colors duration-200 font-medium flex items-center justify-center gap-2"
             >
+              <Trash2 size={20} />
               Delete Account
             </button>
           </div>
 
-          {error && <p className='text-red-900 mt-5'>{error}</p>}
+          {error && (
+            <div className="mt-6 bg-red-500/10 border border-red-500 text-red-400 px-4 py-3 rounded-lg">
+              <p className="font-medium">{error}</p>
+            </div>
+          )}
         </form>
       </div>
+    </div>
     </>
   )
 }
