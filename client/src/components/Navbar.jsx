@@ -66,7 +66,8 @@ const Navbar = () => {
   ];
 
   return (
-    <div className="fixed top-0 left-0 right-0 bg-gray-900/95 backdrop-blur-sm border-b border-gray-800/50 shadow-xl z-50 p-7">
+    <div className="fixed top-0 left-0 right-0 bg-gray-900/95 backdrop-blur-sm border-b border-gray-800/50 shadow-xl z-50 p-4">
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
@@ -79,7 +80,7 @@ const Navbar = () => {
 
           {/* Navigation Links */}
           <nav className=" flex justify-center">
-            <ul className="nav-links  flex justify-center items-center space-x-8 text-lg font-medium">
+            <ul className="nav-links  flex justify-center items-center space-x-8 text-sm font-medium">
               {navItems.map(({ path, label, icon: Icon }) => (
                 <NavLink
                   key={path}
@@ -106,7 +107,7 @@ const Navbar = () => {
                 <img 
                   src={currentUser.avatar} 
                   alt="Profile" 
-                  className="h-12 w-12 rounded-full object-cover ring-3 ring-gray-800 group-hover:ring-indigo-500 transition-all duration-200"
+                  className="h-10 w-10 rounded-full object-cover ring-3 ring-gray-800 group-hover:ring-indigo-500 transition-all duration-200"
                 />
               </div>
               

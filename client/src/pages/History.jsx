@@ -65,7 +65,7 @@ export default function History() {
   return (
     <>
       <Navbar />
-      <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black mt-30">
+      <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black mt-20">
         <div className="container mx-auto px-4 py-8">
           <div className="flex items-center justify-between mb-8">
             <h1 className="text-4xl font-bold text-white tracking-tight">
