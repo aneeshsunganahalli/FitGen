@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import Navbar from '../components/Navbar';
-import { Dumbbell, Activity, Package } from 'lucide-react';
+import { Dumbbell, Activity, Package, Sparkles } from 'lucide-react';
 
 export default function Workouts() {
   const { currentUser } = useSelector(state => state.user);
@@ -34,7 +34,7 @@ export default function Workouts() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(workoutForm),
-        credentials: 'include', // This is crucial for sending cookies
+        credentials: 'include',
       });
 
       if (!response.ok) {
@@ -52,7 +52,7 @@ export default function Workouts() {
   };
 
   if (!currentUser) {
-    return null; // or return a loading spinner
+    return null;
   }
 
   return (
@@ -66,65 +66,94 @@ export default function Workouts() {
           </h1>
         </div>
 
-        <form onSubmit={handleSubmit} className="max-w-md space-y-6 mb-8">
-          <div className="space-y-2">
-            <label className="block text-white">Fitness Goal:</label>
-            <select
-              value={workoutForm.goal}
-              onChange={(e) => setWorkoutForm(prev => ({...prev, goal: e.target.value}))}
-              className="w-full p-3 border rounded-lg bg-gray-800/50 text-white border-gray-700 backdrop-blur-sm focus:border-indigo-500 transition-all duration-300"
-              required
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {/* Form Section */}
+          <form onSubmit={handleSubmit} className="space-y-6 mb-8">
+            <div className="space-y-2">
+              <label className="block text-white">Fitness Goal:</label>
+              <select
+                value={workoutForm.goal}
+                onChange={(e) => setWorkoutForm(prev => ({...prev, goal: e.target.value}))}
+                className="w-full p-3 border rounded-lg bg-gray-800/50 text-white border-gray-700 backdrop-blur-sm focus:border-indigo-500 transition-all duration-300"
+                required
+              >
+                <option value="">Select a goal</option>
+                <option value="Weight Loss">Weight Loss</option>
+                <option value="Muscle Gain">Muscle Gain</option>
+                <option value="Endurance">Endurance</option>
+                <option value="General Fitness">General Fitness</option>
+              </select>
+            </div>
+
+            <div className="space-y-2">
+              <label className="block text-white">Fitness Level:</label>
+              <select
+                value={workoutForm.fitnessLevel}
+                onChange={(e) => setWorkoutForm(prev => ({...prev, fitnessLevel: e.target.value}))}
+                className="w-full p-3 border rounded-lg bg-gray-800/50 text-white border-gray-700 backdrop-blur-sm focus:border-indigo-500 transition-all duration-300"
+                required
+              >
+                <option value="">Select level</option>
+                <option value="Beginner">Beginner</option>
+                <option value="Intermediate">Intermediate</option>
+                <option value="Advanced">Advanced</option>
+              </select>
+            </div>
+
+            <div className="space-y-2">
+              <label className="block text-white">Available Equipment:</label>
+              <input
+                type="text"
+                value={workoutForm.availableEquipment}
+                onChange={(e) => setWorkoutForm(prev => ({...prev, availableEquipment: e.target.value}))}
+                className="w-full p-3 border rounded-lg bg-gray-800/50 text-white border-gray-700 backdrop-blur-sm focus:border-indigo-500 transition-all duration-300"
+                placeholder="e.g., Dumbbells, Resistance bands, etc."
+                required
+              />
+            </div>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-indigo-600 text-white px-4 py-3 rounded-lg font-semibold hover:bg-indigo-500 disabled:bg-gray-600 disabled:text-gray-400 transform hover:scale-102 transition-all duration-300"
             >
-              <option value="">Select a goal</option>
-              <option value="Weight Loss">Weight Loss</option>
-              <option value="Muscle Gain">Muscle Gain</option>
-              <option value="Endurance">Endurance</option>
-              <option value="General Fitness">General Fitness</option>
-            </select>
-          </div>
+              {loading ? (
+                <div className="flex items-center justify-center gap-2">
+                  <Dumbbell size={20} className="animate-bounce" />
+                  <span>Generating...</span>
+                </div>
+              ) : (
+                'Generate Workout'
+              )}
+            </button>
+          </form>
 
-          <div className="space-y-2">
-            <label className="block text-white">Fitness Level:</label>
-            <select
-              value={workoutForm.fitnessLevel}
-              onChange={(e) => setWorkoutForm(prev => ({...prev, fitnessLevel: e.target.value}))}
-              className="w-full p-3 border rounded-lg bg-gray-800/50 text-white border-gray-700 backdrop-blur-sm focus:border-indigo-500 transition-all duration-300"
-              required
-            >
-              <option value="">Select level</option>
-              <option value="Beginner">Beginner</option>
-              <option value="Intermediate">Intermediate</option>
-              <option value="Advanced">Advanced</option>
-            </select>
-          </div>
-
-          <div className="space-y-2">
-            <label className="block text-white">Available Equipment:</label>
-            <input
-              type="text"
-              value={workoutForm.availableEquipment}
-              onChange={(e) => setWorkoutForm(prev => ({...prev, availableEquipment: e.target.value}))}
-              className="w-full p-3 border rounded-lg bg-gray-800/50 text-white border-gray-700 backdrop-blur-sm focus:border-indigo-500 transition-all duration-300"
-              placeholder="e.g., Dumbbells, Resistance bands, etc."
-              required
-            />
-          </div>
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-indigo-600 text-white px-4 py-3 rounded-lg font-semibold hover:bg-indigo-500 disabled:bg-gray-600 disabled:text-gray-400 transform hover:scale-102 transition-all duration-300"
-          >
-            {loading ? (
-              <div className="flex items-center justify-center gap-2">
-                <Dumbbell size={20} className="animate-bounce" />
-                <span>Generating...</span>
+          {/* AI Integration Section */}
+          <div className="bg-gray-800/30 backdrop-blur-sm rounded-xl border border-gray-700/50 p-8 h-fit">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="bg-indigo-600/20 p-3 rounded-lg">
+                <Sparkles size={24} className="text-indigo-400" />
               </div>
-            ) : (
-              'Generate Workout'
-            )}
-          </button>
-        </form>
+              <h2 className="text-2xl font-bold text-white">Powered by OpenAI</h2>
+            </div>
+            
+            <div className="space-y-6">
+              <p className="text-gray-300 leading-relaxed">
+                Our advanced AI system analyzes your goals, fitness level, and available equipment to create 
+                personalized workout plans tailored just for you.
+              </p>
+              
+              <div className="relative w-full aspect-video rounded-lg overflow-hidden">
+                <img 
+                  src='OpenAI_0.webp'
+                  alt="AI Workout Generation"
+                  className="w-full h-full object-cover rounded-lg"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-gray-900/80 to-transparent"></div>
+              </div>
+            </div>
+          </div>
+        </div>
 
         {error && (
           <div className="bg-red-500/10 border border-red-500 text-red-400 px-4 py-3 rounded-lg mb-6">
@@ -133,7 +162,7 @@ export default function Workouts() {
         )}
 
         {workout && (
-          <div className="bg-gray-800/50 backdrop-blur-sm p-6 rounded-xl border border-gray-700/50 shadow-xl">
+          <div className="bg-gray-800/50 backdrop-blur-sm p-6 rounded-xl border border-gray-700/50 shadow-xl mt-8">
             <h2 className="text-2xl font-bold text-white mb-6">Your Workout Plan</h2>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">

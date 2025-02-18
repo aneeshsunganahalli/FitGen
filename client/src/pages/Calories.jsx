@@ -20,12 +20,14 @@ const Calories = () => {
   });
   const [servingSizeError, setServingSizeError] = useState('');
   const [visibleDetails, setVisibleDetails] = useState({});
+  const [totalCalories, setTotalCalories] = useState(0);
 
   useEffect(() => {
     if (!currentUser) {
       navigate('/sign-in');
     } else {
       fetchFoodLogs();
+      fetchDailyCalories();
     }
   }, [currentUser, navigate]);
 
@@ -44,6 +46,24 @@ const Calories = () => {
     } catch (err) {
       console.error('Failed to fetch food logs:', err.message);
       setFoodLogs([]);
+    }
+  };
+
+  const fetchDailyCalories = async () => {
+    try {
+      const response = await fetch(`http://localhost:5000/api/food/daily-calories`, {
+        credentials: 'include',
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setTotalCalories(data.totalCalories);
+      } else {
+        throw new Error(response.statusText);
+      }
+    } catch (err) {
+      console.error('Failed to fetch daily calories:', err.message);
+      setTotalCalories(0);
     }
   };
 
@@ -77,18 +97,14 @@ const Calories = () => {
           'Content-Type': 'application/json',
         },
         credentials: 'include',
-        body: JSON.stringify({
-          foodName: food.foodName,
-          calories: food.calories,
-          servingSize: food.servingSize,
-        }),
+        body: JSON.stringify(food),
       });
 
       if (!response.ok) {
         throw new Error('Failed to log food');
       }
 
-      await fetchFoodLogs();
+      fetchDailyCalories();
     } catch (err) {
       setError(err.message);
     }
@@ -120,7 +136,7 @@ const Calories = () => {
         throw new Error('Failed to log food');
       }
 
-      await fetchFoodLogs();
+      fetchDailyCalories();
       setManualFood({ foodName: '', calories: '', servingSize: '' });
     } catch (err) {
       setError(err.message);
@@ -157,14 +173,12 @@ const Calories = () => {
       <Navbar />
       <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black mt-23">
         <div className="container mx-auto px-4 py-8">
-          <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center justify-evenly mb-8">
             <h1 className="text-4xl font-bold text-white tracking-tight">
               Calories Tracker
             </h1>
-            <CalorieTracker />
-            <div className="bg-indigo-600 text-white px-4 py-2 rounded-lg shadow-lg">
-              Today's Goal: 2000 cal
-            </div>
+            <CalorieTracker currentCalories={totalCalories} />
+            
           </div>
 
           {error && (
@@ -189,34 +203,36 @@ const Calories = () => {
               <button
                 onClick={searchFoods}
                 className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg px-6 py-3 transition-colors duration-200"
-                disabled={loading}
+                disabled={!query || loading}
               >
                 {loading ? 'Searching...' : 'Search'}
               </button>
             </div>
 
-            <ul className="mt-4 space-y-2">
-              {foods.map((food, index) => (
-                <li key={`${food.foodName}-${index}`}
-                  className="bg-gray-900/50 rounded-lg p-4 flex justify-between items-center group hover:bg-gray-800/50 transition-colors duration-200">
-                  <div className="flex items-center gap-3">
-                    <Apple className="text-gray-400" size={20} />
-                    <div>
-                      <span className="text-white">{capitalizeWords(food.foodName)}</span>
-                      <div className="text-sm text-gray-400">
-                        {food.calories} calories • {food.servingSize}
+            {query && foods.length > 0 && (
+              <ul className="mt-4 space-y-2">
+                {foods.map((food, index) => (
+                  <li key={`${food.foodName}-${index}`}
+                    className="bg-gray-900/50 rounded-lg p-4 flex justify-between items-center group hover:bg-gray-800/50 transition-colors duration-200">
+                    <div className="flex items-center gap-3">
+                      <Apple className="text-gray-400" size={20} />
+                      <div>
+                        <span className="text-white">{capitalizeWords(food.foodName)}</span>
+                        <div className="text-sm text-gray-400">
+                          {food.calories} calories • {food.servingSize}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  <button
-                    onClick={() => logFood(food)}
-                    className="bg-green-600 hover:bg-green-700 text-white rounded-lg px-4 py-2 transition-colors duration-200"
-                  >
-                    Log Food
-                  </button>
-                </li>
-              ))}
-            </ul>
+                    <button
+                      onClick={() => logFood(food)}
+                      className="bg-green-600 hover:bg-green-700 text-white rounded-lg px-4 py-2 transition-colors duration-200"
+                    >
+                      Log Food
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
 
           {/* Manual Entry Section */}

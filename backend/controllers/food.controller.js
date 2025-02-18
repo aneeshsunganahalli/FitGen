@@ -102,3 +102,34 @@ export const getUserFoodLog = async (req, res) => {
     });
   }
 };
+
+// New function to get total calories for the current day
+export const getDailyCalories = async (req, res) => {
+  if (!req.user) {
+    return res.status(401).json({ error: 'Not authenticated' });
+  }
+
+  try {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Set to start of the day
+    const tomorrow = new Date(today);
+    tomorrow.setDate(today.getDate() + 1); // Set to start of the next day
+
+    // Query to fetch food logs for the authenticated user for today
+    const foodLogs = await FoodLog.find({
+      userId: req.user.id,
+      date: { $gte: today, $lt: tomorrow }
+    }).select('calories');
+
+    // Calculate total calories from the fetched logs
+    const totalCalories = foodLogs.reduce((sum, log) => sum + log.calories, 0);
+
+    res.json({ totalCalories });
+  } catch (error) {
+    console.error('Daily calories retrieval error:', error);
+    res.status(500).json({
+      error: 'Error retrieving daily calories',
+      details: error.message
+    });
+  }
+};

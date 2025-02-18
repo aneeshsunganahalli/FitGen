@@ -62,21 +62,11 @@ const CalorieProgress = ({ currentCalories, dailyGoal = 2000 }) => {
   );
 };
 
-// Example usage component with mock data
-const CalorieTracker = () => {
-  const [calories, setCalories] = React.useState(0);
-
-  // Demo: Increment calories every few seconds
-  React.useEffect(() => {
-    const interval = setInterval(() => {
-      setCalories(prev => (prev < 2500 ? prev + 100 : 0));
-    }, 2000);
-    return () => clearInterval(interval);
-  }, []);
-
+// Update CalorieTracker to accept currentCalories as a prop
+const CalorieTracker = ({ currentCalories }) => {
   return (
     <div className="bg-gray-900 p-8 rounded-xl">
-      <CalorieProgress currentCalories={calories} dailyGoal={2000} />
+      <CalorieProgress currentCalories={currentCalories} dailyGoal={2000} />
     </div>
   );
 };

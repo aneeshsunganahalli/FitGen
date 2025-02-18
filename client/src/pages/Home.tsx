@@ -12,7 +12,7 @@ export default function Home() {
       <Navbar />
       <div
         className="h-screen flex bg-cover bg-center relative"
-        style={{ backgroundImage: "url('Home.png')" }}
+        style={{ backgroundImage: "url('p2.jpg')" }}
       >
         {/* Overlay */}
         <div className="absolute inset-0 bg-opacity-50"></div>
