@@ -53,6 +53,7 @@ export const signup = async (req, res) => {
         httpOnly: true,
         secure: true,
         sameSite: 'none',
+        maxAge: 24 * 60 * 60 * 1000 // 24 hours
       })
       .status(201)
       .json(rest);
@@ -88,12 +89,13 @@ export const signin = async (req, res, next) => {
     // Set the cookie with proper options
     res.cookie('access_token', token, {
       httpOnly: true,
-      secure: true,
+      secure: process.env.NODE_ENV === 'production',
       sameSite: 'none',
       maxAge: 24 * 60 * 60 * 1000 // 24 hours
     });
 
     const { password: pass, ...rest } = validUser._doc;
+    console.log('Setting cookie and sending response:', rest);
     res.status(200).json(rest);
   } catch (error) {
     next(error);
