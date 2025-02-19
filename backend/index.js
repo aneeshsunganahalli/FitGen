@@ -45,11 +45,7 @@ app.use('/api/user', userRouter);
 app.use('/api/food', foodRouter);
 
 
-app.use(express.static(join(__dirname, '../client/dist')))
 
-app.get('*', (req, res) => {
-  res.sendFile(join(__dirname, '../client/dist', 'index.html'))
-})
 
 app.use((err, req, res, next) => {
   console.error(err.stack);
