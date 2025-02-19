@@ -38,7 +38,7 @@ export default function Profile() {
     e.preventDefault();
     try {
       dispatch(updateUserStart());
-      const res = await fetch(`http://localhost:5000/api/user/update/${currentUser._id}`, {
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/user/update/${currentUser._id}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -94,7 +94,7 @@ export default function Profile() {
       if (!confirmed) return;
 
       dispatch(deleteUserStart());
-      const res = await fetch(`http://localhost:5000/api/user/delete/${currentUser._id}`, {
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/user/delete/${currentUser._id}`, {
         method: 'DELETE',
         credentials: 'include',
       });

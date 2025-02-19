@@ -20,7 +20,7 @@ export default function History() {
 
     const fetchWorkouts = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/workouts/user-workouts', {
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/workouts/user-workouts`, {
           credentials: 'include'
         });
 

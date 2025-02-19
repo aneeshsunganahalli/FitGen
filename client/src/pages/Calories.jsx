@@ -33,7 +33,7 @@ const Calories = () => {
 
   const fetchFoodLogs = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/api/food/log`, {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/food/log`, {
         credentials: 'include',
       });
 
@@ -51,7 +51,7 @@ const Calories = () => {
 
   const fetchDailyCalories = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/api/food/daily-calories`, {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/food/daily-calories`, {
         credentials: 'include',
       });
 
@@ -71,7 +71,7 @@ const Calories = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch(`http://localhost:5000/api/food/search?query=${query}`, {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/food/search?query=${query}`, {
         method: 'GET',
         credentials: 'include',
       });
@@ -91,7 +91,7 @@ const Calories = () => {
 
   const logFood = async (food) => {
     try {
-      const response = await fetch('http://localhost:5000/api/food/add', {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/food/add`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -123,7 +123,7 @@ const Calories = () => {
     }
     setServingSizeError('');
     try {
-      const response = await fetch('http://localhost:5000/api/food/add', {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/food/add`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

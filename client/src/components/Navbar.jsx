@@ -40,7 +40,7 @@ const Navbar = () => {
   const logout = async () => {
     try {
       dispatch(signOutStart());
-      const res = await fetch('http://localhost:5000/api/auth/logout', {
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/auth/logout`, {
         method: 'GET',
         credentials: 'include'
       });

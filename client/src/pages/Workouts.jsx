@@ -28,7 +28,7 @@ export default function Workouts() {
     setError(null);
 
     try {
-      const response = await fetch('http://localhost:5000/api/workouts/generate', {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/workouts/generate`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
