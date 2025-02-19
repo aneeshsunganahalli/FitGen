@@ -52,7 +52,8 @@ export const signup = async (req, res) => {
       .cookie('access_token', token, {
         httpOnly: true,
         secure: true,
-        sameSite: 'none'
+        sameSite: 'none',
+        domain: '.onrender.com'
       })
       .status(201)
       .json(rest);
@@ -90,6 +91,7 @@ export const signin = async (req, res, next) => {
       httpOnly: true,
       secure: true,
       sameSite: 'none',
+      domain: '.onrender.com',
       maxAge: 24 * 60 * 60 * 1000 // 24 hours
     });
 
@@ -111,7 +113,8 @@ export const google = async (req, res, next) => {
         .cookie('access_token', token, {
           httpOnly: true,
           secure: true,
-          sameSite: 'none'
+          sameSite: 'none',
+          domain: '.onrender.com'
         })
         .status(200)
         .json(rest);
@@ -128,7 +131,8 @@ export const google = async (req, res, next) => {
         .cookie('access_token', token, {
           httpOnly: true,
           secure: true,
-          sameSite: 'none'
+          sameSite: 'none',
+          domain: '.onrender.com'
         })
         .status(200)
         .json(rest);
