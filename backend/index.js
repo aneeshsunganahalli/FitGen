@@ -27,6 +27,8 @@ app.use(cors({
 
 app.use(express.json())
 app.use(cookieParser())
+app.options("*", cors()); // Handle preflight requests
+
 
 const server = app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
