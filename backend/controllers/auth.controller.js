@@ -51,7 +51,7 @@ export const signup = async (req, res) => {
     res
       .cookie('access_token', token, {
         httpOnly: true,
-        secure: true,
+        secure: false,
         sameSite: 'none',
         maxAge: 24 * 60 * 60 * 1000 // 24 hours
       })
@@ -88,7 +88,7 @@ export const signin = async (req, res, next) => {
 
     // Set the cookie with proper options
     res.cookie('access_token', token, {
-      httpOnly: true,
+      httpOnly: false,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'none',
       maxAge: 24 * 60 * 60 * 1000 // 24 hours
@@ -112,7 +112,7 @@ export const google = async (req, res, next) => {
       res
         .cookie('access_token', token, {
           httpOnly: true,
-          secure: true,
+          secure: false,
           sameSite: 'none'
         })
         .status(200)
@@ -129,7 +129,7 @@ export const google = async (req, res, next) => {
       res
         .cookie('access_token', token, {
           httpOnly: true,
-          secure: true,
+          secure: false,
           sameSite: 'none',
         })
         .status(200)
