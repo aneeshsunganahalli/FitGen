@@ -21,22 +21,30 @@ export default function SignIn() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Validate input fields
+    if (!formData.email || !formData.password) {
+      dispatch(signInFailure({ message: 'Email and password are required.' }));
+      return; // Stop execution if validation fails
+    }
+
     try {
       dispatch(signInStart());
-      const res = await fetch('/api/auth/signin', {
+      const res = await fetch('http://localhost:5000/api/auth/signin', { 
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
+        credentials : 'include',
         body: JSON.stringify(formData)
       })
       const data = await res.json()
       if(data.success === false){
         dispatch(signInFailure(data))
-        return;
+        return; // Prevent navigation on failure
       }
       dispatch(signInSuccess(data))
-      navigate('/')
+      navigate('/') // Only navigate if sign-in is successful
     } catch (error) {
       dispatch(signInFailure(error.message))
     }
