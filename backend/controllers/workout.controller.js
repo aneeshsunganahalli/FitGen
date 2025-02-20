@@ -49,7 +49,8 @@ export const generateWorkout = async (req, res) => {
     }
 
     // Verify user is authenticated
-    if (!req.user?.id) {
+    const userId = req.user.id || req.user._id;
+    if (!userId) {
       return res.status(401).json({
         error: "Unauthorized",
         details: "User must be logged in to create workouts"
@@ -94,10 +95,9 @@ export const generateWorkout = async (req, res) => {
     });
 
     console.log('AI Response:', response);
-
     // Create new workout document with authenticated user's ID
     const workout = new Workout({
-      userId: req.user.id,  // Use the authenticated user's ID
+      userId: userId,  // Use the authenticated user's ID
       goal,
       fitnessLevel,
       availableEquipment: Array.isArray(availableEquipment) 
@@ -121,7 +121,8 @@ export const generateWorkout = async (req, res) => {
 
 export const getUserWorkouts = async (req, res, next) => {
   try {
-    const workouts = await Workout.find({ userId: req.user.id })
+    const userId = req.user.id || req.user._id;
+    const workouts = await Workout.find({ userId: userId})
       .sort({ date: -1 }); // Sort by date, newest first
     
     res.status(200).json(workouts);

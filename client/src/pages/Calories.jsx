@@ -11,6 +11,7 @@ const Calories = () => {
   const [query, setQuery] = useState('');
   const [foods, setFoods] = useState([]);
   const [foodLogs, setFoodLogs] = useState([]);
+  console.log(foodLogs)
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [manualFood, setManualFood] = useState({

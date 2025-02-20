@@ -50,6 +50,7 @@ export const addFoodManually = async (req, res) => {
 
   try {
     const { foodName, calories, servingSize } = req.body;
+      const userId = req.user.id || req.user._id;
 
     if (!foodName || !calories || !servingSize) {
       return res.status(400).json({
@@ -59,7 +60,7 @@ export const addFoodManually = async (req, res) => {
     }
 
     const newFoodLog = new FoodLog({
-      userId: req.user.id,
+      userId: userId,
       foodName,
       calories: Number(calories),
       servingSize,
@@ -84,8 +85,11 @@ export const getUserFoodLog = async (req, res) => {
   }
 
   try {
+    const userId = req.user.id || req.user._id;
     // Query to fetch food logs for the authenticated user
-    const foodLogs = await FoodLog.find({ userId: req.user.id }).sort({ date: -1 }).select('foodName calories servingSize date');
+    const foodLogs = await FoodLog.find({ userId: userId })
+      .sort({ date: -1 })
+      .select('foodName calories servingSize date');
 
     // Calculate total calories from the fetched logs
     const totalCalories = foodLogs.reduce((sum, log) => sum + log.calories, 0);
@@ -110,6 +114,7 @@ export const getDailyCalories = async (req, res) => {
   }
 
   try {
+    const userId = req.user.id || req.user._id;
     const today = new Date();
     today.setHours(0, 0, 0, 0); // Set to start of the day
     const tomorrow = new Date(today);
@@ -117,7 +122,7 @@ export const getDailyCalories = async (req, res) => {
 
     // Query to fetch food logs for the authenticated user for today
     const foodLogs = await FoodLog.find({
-      userId: req.user.id,
+      userId: userId,
       date: { $gte: today, $lt: tomorrow }
     }).select('calories');
 
