@@ -6,7 +6,8 @@ import Workout from "../models/workout.model.js";
 
 
 export const updateUser =  async (req, res, next) => {
-  if(req.user.id !== req.params.id) return next(errorHandler(401, "You can only update your account"));
+  const userId = req.user.id || req.user._id;
+  if(userId !== req.params.id) return next(errorHandler(401, "You can only update your account"));
   try {
       if(req.body.password) {
         req.body.password = bcryptjs.hashSync(req.body.password, 10);
@@ -30,7 +31,8 @@ export const updateUser =  async (req, res, next) => {
 }
 
 export const getUserWorkouts = async (req,res,next) => {
-  if(req.user.id === req.params.id) {
+  const userId = req.user.id || req.user._id;
+  if(userId === req.params.id) {
     try {
       const listings = await Workout.find({userRef: req.params.id})
       res.status(200).json(listings);
@@ -43,7 +45,8 @@ export const getUserWorkouts = async (req,res,next) => {
 }
 
 export const deleteUser = async (req, res, next) => {
-  if(req.user.id !== req.params.id) return next(errorHandler(401, "You can only delete your account"));
+  const userId = req.user.id || req.user._id;
+  if(userId !== req.params.id) return next(errorHandler(401, "You can only delete your account"));
   try {
     // Delete all workouts associated with the user first
     await Workout.deleteMany({ userRef: req.params.id });

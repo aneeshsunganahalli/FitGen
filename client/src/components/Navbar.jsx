@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { signOutStart, signOutSuccess, signOutFailure } from '../redux/user/userSlice';
@@ -9,6 +9,7 @@ const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useDispatch();
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
   useEffect(() => {
     const updateSlider = () => {
@@ -58,6 +59,10 @@ const Navbar = () => {
     }
   };
 
+  const toggleDropdown = () => {
+    setDropdownOpen(prev => !prev);
+  };
+
   const navItems = [
     { path: '/', label: 'Home', icon: Home },
     { path: '/workouts', label: 'Workouts', icon: Dumbbell },
@@ -103,34 +108,36 @@ const Navbar = () => {
           {/* User Menu */}
           {currentUser ? (
             <div className="relative group">
-              <div className="flex items-center gap-3 cursor-pointer">
+              <div className="flex items-center gap-3 cursor-pointer" onClick={toggleDropdown}>
                 <img 
                   src={currentUser.avatar} 
                   alt="Profile" 
-                  className="h-10 w-10 rounded-full object-cover ring-3 ring-gray-800 group-hover:ring-indigo-500 transition-all duration-200"
+                  className="h-10 w-10 rounded-full object-cover ring-3 ring-gray-800 transition-all duration-200"
                 />
               </div>
               
-              <div className="absolute right-0 w-48 mt-2 origin-top-right hidden group-hover:block">
-                <div className="bg-gray-800 rounded-lg shadow-lg ring-1 ring-gray-700 overflow-hidden">
-                  <div className="p-1">
-                    <button
-                      onClick={() => navigate('/profile')}
-                      className="flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 rounded-md transition-colors duration-150"
-                    >
-                      <User size={16} />
-                      Profile
-                    </button>
-                    <button
-                      onClick={logout}
-                      className="flex items-center gap-2 w-full px-4 py-2 text-sm text-red-400 hover:bg-gray-700 rounded-md transition-colors duration-150"
-                    >
-                      <LogOut size={16} />
-                      Logout
-                    </button>
+              {dropdownOpen && (
+                <div className="absolute right-0 w-48 mt-2 origin-top-right">
+                  <div className="bg-gray-800 rounded-lg shadow-lg ring-1 ring-gray-700 overflow-hidden">
+                    <div className="p-1">
+                      <button
+                        onClick={() => navigate('/profile')}
+                        className="flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 rounded-md transition-colors duration-150"
+                      >
+                        <User size={16} />
+                        Profile
+                      </button>
+                      <button
+                        onClick={logout}
+                        className="flex items-center gap-2 w-full px-4 py-2 text-sm text-red-400 hover:bg-gray-700 rounded-md transition-colors duration-150"
+                      >
+                        <LogOut size={16} />
+                        Logout
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
+              )}
             </div>
           ) : (
             <button
